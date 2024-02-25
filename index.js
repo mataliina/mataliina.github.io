@@ -106,8 +106,6 @@ function handleEvent(event) {
 			selectedBlockCells[i].style.cssText = 'width: ' + (CELL_WIDTH-2) + 'px; height: ' + (CELL_HEIGHT-2) + 'px;'
 		}*/
 	} else if (event.type === 'touchstart') {
-		// for prevent scrolling:
-		startY = event.touches[0].clientY
 
 		isDragging = true
 		let touch = event.touches[0]
