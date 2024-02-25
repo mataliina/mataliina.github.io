@@ -148,8 +148,10 @@ function handleEvent(event) {
 		if (isDragging) {
 			const x = event.clientX
 			const y = event.clientY
+			let newTop = y - moveable.offsetHeight / 2 - 60
+			if (newTop < 0) newTop = 0
 			moveable.style.left = x - moveable.offsetWidth / 2 + 'px'
-			moveable.style.top = y - moveable.offsetHeight / 2 + 'px'
+			moveable.style.top = newTop + 'px'
 		}
 	} else if (event.type === 'touchmove') {
 		if (isDragging) {
@@ -158,9 +160,17 @@ function handleEvent(event) {
 
 			let deltaX = touch.clientX - initialX
 			let deltaY = touch.clientY - initialY
+			// Calculate the new top position
+			let newTop = elementY + deltaY - 60
 
+			// Ensure the element doesn't move above the top edge of the screen
+			if (newTop < 0) {
+				newTop = 0
+			}
+			// Set the new top position
+			moveable.style.top = newTop + 'px'
 			moveable.style.left = elementX + deltaX + 'px'
-			moveable.style.top = elementY + deltaY + 'px'
+			//moveable.style.top = elementY + deltaY + 'px'
 		} else {
 			if (event.touches[0].clientY < startScrollY) {
 				event.preventDefault()
