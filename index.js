@@ -7,7 +7,7 @@ const overlay = document.getElementById('overlay')
 const scoreBoard = document.getElementById('score')
 const finalScore = document.getElementById('final-score')
 
-const gameGridArray = []
+let gameGridArray = []
 
 let CELL_WIDTH = 40
 let CELL_HEIGHT = 40
@@ -58,6 +58,7 @@ function drawGameBlock(blockType) {
 }
 
 function initGameGridArray() {
+	gameGridArray = []
 	for (let i = 0; i < ROWS; i++) {
 		gameGridArray.push(new Array(COLS).fill(0))
 	}
@@ -110,7 +111,6 @@ function handleEvent(event) {
 		initialX = touch.clientX
 		initialY = touch.clientY
 
-		// Haetaan liikutettavan elementin nykyinen sijainti
 		let elementRect = gameBlock.getBoundingClientRect()
 		elementX = elementRect.left
 		elementY = elementRect.top
@@ -227,47 +227,45 @@ function checkCompleted() {
 	let completedColumns = []
 	let completedGrids = []
 	// check rows
-	for (let row = 0; row < gameGridArray.length; row++) {	
-		let isRowCompleted = true	
-        for (let col = 0; col < gameGridArray[row].length; col++) {			
-            if (gameGridArray[row][col] === 0) {  
-				isRowCompleted = false;
-                break; 
-            } 		
-        }
-		if(isRowCompleted) completedRows.push(row)
-    }
-	// check columns
-	for(let col = 0; col < gameGridArray[0].length; col++){
-		let isColumnCompleted = true
-		for(let row = 0; row < gameGridArray.length; row++){
-			if(gameGridArray[row][col] === 0) {
-				isColumnCompleted = false
-				break;
+	for (let row = 0; row < gameGridArray.length; row++) {
+		let isRowCompleted = true
+		for (let col = 0; col < gameGridArray[row].length; col++) {
+			if (gameGridArray[row][col] === 0) {
+				isRowCompleted = false
+				break
 			}
 		}
-		if(isColumnCompleted) completedColumns.push(col)	
+		if (isRowCompleted) completedRows.push(row)
+	}
+	// check columns
+	for (let col = 0; col < gameGridArray[0].length; col++) {
+		let isColumnCompleted = true
+		for (let row = 0; row < gameGridArray.length; row++) {
+			if (gameGridArray[row][col] === 0) {
+				isColumnCompleted = false
+				break
+			}
+		}
+		if (isColumnCompleted) completedColumns.push(col)
 	}
 	// check grids
-	for(let row = 0; row < ROWS; row += SUBGRID_SIZE){
-		for(let col = 0; col < COLS; col += SUBGRID_SIZE){
-			if(isSubgridCompleted(row, col)){
+	for (let row = 0; row < ROWS; row += SUBGRID_SIZE) {
+		for (let col = 0; col < COLS; col += SUBGRID_SIZE) {
+			if (isSubgridCompleted(row, col)) {
 				completedGrids.push([row, col])
 			}
 		}
-		
 	}
-	
-	if(completedRows.length > 0) clearCompletedRows(completedRows)
-	if(completedColumns.length > 0) clearCompletedColumns(completedColumns)
-	if(completedGrids.length > 0) clearCompletedSubgrids(completedGrids)
-     
+
+	if (completedRows.length > 0) clearCompletedRows(completedRows)
+	if (completedColumns.length > 0) clearCompletedColumns(completedColumns)
+	if (completedGrids.length > 0) clearCompletedSubgrids(completedGrids)
 }
 
-function isSubgridCompleted(startRow, startCol){
-	for(let row = startRow; row < startRow + SUBGRID_SIZE; row++){
-		for(let col = startCol; col < startCol + SUBGRID_SIZE; col++){
-			if(gameGridArray[row][col] === 0){
+function isSubgridCompleted(startRow, startCol) {
+	for (let row = startRow; row < startRow + SUBGRID_SIZE; row++) {
+		for (let col = startCol; col < startCol + SUBGRID_SIZE; col++) {
+			if (gameGridArray[row][col] === 0) {
 				return false
 			}
 		}
@@ -275,41 +273,41 @@ function isSubgridCompleted(startRow, startCol){
 	return true
 }
 
-function clearCompletedRows(rows){
-	rows.forEach(row => {
-		for(let col = 0; col < gameGridArray[row].length; col++) {
+function clearCompletedRows(rows) {
+	rows.forEach((row) => {
+		for (let col = 0; col < gameGridArray[row].length; col++) {
 			gameGridArray[row][col] = 0
-			score += 2
-		}
-	});	
-}
-
-function clearCompletedColumns(columns) {
-	columns.forEach(col => {
-		for(let row = 0; row < gameGridArray.length; row++){
-			gameGridArray[row][col] = 0;
 			score += 2
 		}
 	})
 }
 
-function clearCompletedSubgrids(completedGrids){
-	completedGrids.forEach(compGrid => {
-		for(let row = compGrid[0]; row < compGrid[0] + SUBGRID_SIZE; row++){
-			for(let col = compGrid[1]; col < compGrid[1] + SUBGRID_SIZE; col++){
-				gameGridArray[row][col] = 0;
+function clearCompletedColumns(columns) {
+	columns.forEach((col) => {
+		for (let row = 0; row < gameGridArray.length; row++) {
+			gameGridArray[row][col] = 0
+			score += 2
+		}
+	})
+}
+
+function clearCompletedSubgrids(completedGrids) {
+	completedGrids.forEach((compGrid) => {
+		for (let row = compGrid[0]; row < compGrid[0] + SUBGRID_SIZE; row++) {
+			for (let col = compGrid[1]; col < compGrid[1] + SUBGRID_SIZE; col++) {
+				gameGridArray[row][col] = 0
 				score += 2
 			}
 		}
 	})
 }
 
-function isGameOver(gameBlock){
+function isGameOver(gameBlock) {
 	// TODO: muuta niin että tarkastaa kaikki jäljellä olevat palikat, jos niitä on useita
-	for(i = 0; i < ROWS; i++) {
-		for(j = 0; j < COLS; j++) {
-			if(gameGridArray[i][j] === 0) {
-				if(isPossiblePosition(gameBlock, i, j)) return false
+	for (i = 0; i < ROWS; i++) {
+		for (j = 0; j < COLS; j++) {
+			if (gameGridArray[i][j] === 0) {
+				if (isPossiblePosition(gameBlock, i, j)) return false
 			}
 		}
 	}
@@ -317,7 +315,12 @@ function isGameOver(gameBlock){
 }
 
 function startNewGame() {
-	window.location.reload()
+	initGameGridArray()
+	score = 0
+	getNewGameBlock()
+	drawGrid()
+
+	overlay.classList.add('display-none')
 }
 
 
