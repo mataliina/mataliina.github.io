@@ -88,10 +88,12 @@ function getNewGameBlock() {
 	}
 }
 
+let initialX, initialY
+let elementX, elementY
+
 function handleEvent(event) {
 	event.preventDefault()
-	console.log('event.type: ', event.type)
-	if (event.type === 'mousedown' || event.type === 'touchstart') {
+	if (event.type === 'mousedown') {
 		isDragging = true
 
 		/* muuta siirrettävän palikan tyyliä:
@@ -101,15 +103,35 @@ function handleEvent(event) {
 			selectedBlockCells[i].classList.add("gaps-between")
 			selectedBlockCells[i].style.cssText = 'width: ' + (CELL_WIDTH-2) + 'px; height: ' + (CELL_HEIGHT-2) + 'px;'
 		}*/
-	} else if (event.type === 'mousemove' || event.type === 'touchmove') {
+	} else if (event.type === 'touchstart') {
+		let touch = event.touches[0]
+
+		initialX = touch.clientX
+		initialY = touch.clientY
+
+		// Haetaan liikutettavan elementin nykyinen sijainti
+		let elementRect = gameBlock.getBoundingClientRect()
+		elementX = elementRect.left
+		elementY = elementRect.top
+	} else if (event.type === 'mousemove') {
 		if (isDragging) {
 			const x = event.clientX
 			const y = event.clientY
 			gameBlock.style.left = x - gameBlock.offsetWidth / 2 + 'px'
 			gameBlock.style.top = y - gameBlock.offsetHeight / 2 + 'px'
 		}
+	} else if (event.type === 'touchmove') {
+		if (isDragging) {
+			let touch = event.touches[0]
+
+			let deltaX = touch.clientX - initialX
+			let deltaY = touch.clientY - initialY
+
+			gameBlock.style.left = elementX + deltaX + 'px'
+			gameBlock.style.top = elementY + deltaY + 'px'
+		}
 	} else if (event.type === 'mouseup' || event.type === 'touchend') {
-		if (isDragging == true) {
+		if (isDragging) {
 			isDragging = false
 
 			const rect = gameBlock.getBoundingClientRect()
