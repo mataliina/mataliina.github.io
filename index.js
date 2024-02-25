@@ -91,6 +91,7 @@ function getNewGameBlock() {
 
 let initialX, initialY
 let elementX, elementY
+let startScrollY
 
 function handleEvent(event) {
 	event.preventDefault()
@@ -105,6 +106,9 @@ function handleEvent(event) {
 			selectedBlockCells[i].style.cssText = 'width: ' + (CELL_WIDTH-2) + 'px; height: ' + (CELL_HEIGHT-2) + 'px;'
 		}*/
 	} else if (event.type === 'touchstart') {
+		// for prevent scrolling:
+		startY = event.touches[0].clientY
+
 		isDragging = true
 		let touch = event.touches[0]
 
@@ -130,6 +134,10 @@ function handleEvent(event) {
 
 			gameBlock.style.left = elementX + deltaX + 'px'
 			gameBlock.style.top = elementY + deltaY + 'px'
+		} else {
+			if (event.touches[0].clientY < startY) {
+				event.preventDefault()
+			}
 		}
 	} else if (event.type === 'mouseup' || event.type === 'touchend') {
 		if (isDragging) {
@@ -162,7 +170,7 @@ gameBlock.addEventListener('touchstart', handleEvent)
 document.addEventListener(
 	'touchstart',
 	function (event) {
-		event.preventDefault()
+		startScrollY = event.touches[0].clientY
 	},
 	{ passive: false }
 )
