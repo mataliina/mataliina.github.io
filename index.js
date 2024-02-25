@@ -159,10 +159,14 @@ function handleEvent(event) {
 }
 
 gameBlock.addEventListener('touchstart', handleEvent)
-document.addEventListener('touchstart', function (event) {
-	event.preventDefault()
-})
-document.addEventListener('touchmove', handleEvent)
+document.addEventListener(
+	'touchstart',
+	function (event) {
+		event.preventDefault()
+	},
+	{ passive: false }
+)
+document.addEventListener('touchmove', handleEvent, { passive: false })
 document.addEventListener('touchend', handleEvent)
 
 gameBlock.addEventListener('mousedown', handleEvent)
