@@ -75,6 +75,7 @@ function getNewGameBlock() {
 }
 
 function handleEvent(event) {
+	event.preventDefault()
 	if (event.type === 'mousedown' || event.type === 'touchstart') {
 		isDragging = true
 
