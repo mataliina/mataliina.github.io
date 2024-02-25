@@ -159,6 +159,9 @@ function handleEvent(event) {
 }
 
 gameBlock.addEventListener('touchstart', handleEvent)
+document.addEventListener('touchstart', function (event) {
+	event.preventDefault()
+})
 document.addEventListener('touchmove', handleEvent)
 document.addEventListener('touchend', handleEvent)
 
