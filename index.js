@@ -1,32 +1,46 @@
 const ROWS = 9
 const COLS = 9
 const SUBGRID_SIZE = 3
-const CELL_WIDTH = 40
-const CELL_HEIGHT = 40
-const gameGrid = document.getElementById("game-grid")
-const gameBlock = document.getElementById("game-block")
-const overlay = document.getElementById("overlay")
-const scoreBoard = document.getElementById("score")
-const finalScore = document.getElementById("final-score")
+const gameGrid = document.getElementById('game-grid')
+const gameBlock = document.getElementById('game-block')
+const overlay = document.getElementById('overlay')
+const scoreBoard = document.getElementById('score')
+const finalScore = document.getElementById('final-score')
 
-const gameGridArray = [];
+const gameGridArray = []
 
-const blockCellStyle = 'width: ' + (CELL_WIDTH-6) + 'px; height: ' + (CELL_HEIGHT-6) + 'px;'
-const emptyBlockCellStyle = 'width: ' + (CELL_WIDTH-4) + 'px; height: ' + (CELL_HEIGHT-4) + 'px;'
-const gameBlockLeft = "10px"
-const gameBlockTop = "450px"
-const topSectionHeight = 50;
+let CELL_WIDTH = 40
+let CELL_HEIGHT = 40
+let gameGridSize = 369
+
+const screenWidth = window.innerWidth
+
+const gameBlockLeft = '10px'
+let gameBlockTop = '450px'
+let topSectionHeight = 50
+let scoreBoardWidth = 369
+
+if (screenWidth < 380) {
+	CELL_WIDTH = screenWidth / 10
+	CELL_HEIGHT = CELL_WIDTH
+	topSectionHeight = 40
+	gameGridSize = CELL_WIDTH * 9 + 9
+	gameBlockTop = gameGridSize + topSectionHeight + 30 + 'px'
+	scoreBoardWidth = screenWidth
+}
+
+const blockCellStyle = 'width: ' + (CELL_WIDTH - 6) + 'px; height: ' + (CELL_HEIGHT - 6) + 'px;'
+const emptyBlockCellStyle = 'width: ' + (CELL_WIDTH - 4) + 'px; height: ' + (CELL_HEIGHT - 4) + 'px;'
 
 let isDragging = false
 let score = 0
-
 
 let currentBlock = getRandomBlock()
 let gameBlocks = getRandomBlocks()
 
 function drawGameBlock(blockType) {
 	const blockShape = blocks[blockType]
-	gameBlock.style.cssText = 'width: ' + (CELL_WIDTH + 2) * blockShape[0].length + 'px;'
+	gameBlock.style.cssText = 'width: ' + (CELL_WIDTH + 2) * blockShape[0].length + 'px; top: ' + gameBlockTop
 	for (let i = 0; i < blockShape.length; i++) {
 		for (let j = 0; j < blockShape[i].length; j++) {
 			const blockCell = document.createElement('div')
@@ -126,60 +140,58 @@ document.addEventListener('touchend', handleEvent)
 
 gameBlock.addEventListener('mousedown', handleEvent)
 document.addEventListener('mousemove', handleEvent)
-document.addEventListener('mouseup', handleEvent) 
-
+document.addEventListener('mouseup', handleEvent)
 
 function isPossiblePosition(blockType, startRow, startCol) {
-	const blockShape = blocks[blockType];
-    for (let i = 0; i < blockShape.length; i++) {
-        for (let j = 0; j < blockShape[i].length; j++) {
-            if (blockShape[i][j] === 1) {
-                const row = startRow + i;
-                const col = startCol + j;
-                if (row < 0 || row >= ROWS || col < 0 || col >= COLS || gameGridArray[row][col] != 0) {
-                    return false
-                }
-            }
-        }
-    }
+	const blockShape = blocks[blockType]
+	for (let i = 0; i < blockShape.length; i++) {
+		for (let j = 0; j < blockShape[i].length; j++) {
+			if (blockShape[i][j] === 1) {
+				const row = startRow + i
+				const col = startCol + j
+				if (row < 0 || row >= ROWS || col < 0 || col >= COLS || gameGridArray[row][col] != 0) {
+					return false
+				}
+			}
+		}
+	}
 	return true
 }
 
-
 function placeBlockOnGrid(blockType, startRow, startCol) {
-    const blockShape = blocks[blockType];
-    for (let i = 0; i < blockShape.length; i++) {
-        for (let j = 0; j < blockShape[i].length; j++) {
-            if (blockShape[i][j] === 1) {
-                const row = startRow + i;
-                const col = startCol + j;
-                if (row >= 0 && row < ROWS && col >= 0 && col < COLS && gameGridArray[row][col] === 0) {
-                    gameGridArray[row][col] = blockType; 
+	const blockShape = blocks[blockType]
+	for (let i = 0; i < blockShape.length; i++) {
+		for (let j = 0; j < blockShape[i].length; j++) {
+			if (blockShape[i][j] === 1) {
+				const row = startRow + i
+				const col = startCol + j
+				if (row >= 0 && row < ROWS && col >= 0 && col < COLS && gameGridArray[row][col] === 0) {
+					gameGridArray[row][col] = blockType
 					score++
-                }
-            }
-        }
-    }
+				}
+			}
+		}
+	}
 }
 
-
 function drawGrid() {
-	gameGrid.innerHTML = ""
+	gameGrid.innerHTML = ''
+	gameGrid.style.cssText = 'width: ' + gameGridSize + 'px; height: ' + gameGridSize + 'px;'
 	for (let i = 0; i < gameGridArray.length; i++) {
 		for (let j = 0; j < gameGridArray[i].length; j++) {
-			let bgColor = "light-bg"
-			if (((i < 3 || i > 5) && (j < 3 || j > 5)) || (i > 2 && i < 6 && j > 2 && j < 6)) bgColor = "dark-bg"
-			const cell = document.createElement("div")
+			let bgColor = 'light-bg'
+			if (((i < 3 || i > 5) && (j < 3 || j > 5)) || (i > 2 && i < 6 && j > 2 && j < 6)) bgColor = 'dark-bg'
+			const cell = document.createElement('div')
 
-			if(gameGridArray[i][j] != 0) bgColor = "reserved-cell"	
-			
-			cell.style.cssText = 'width: ' + (CELL_WIDTH-1) + 'px; height: ' +(CELL_WIDTH-1)+ 'px;'
-			
-		
-			cell.classList.add("game-cell", bgColor)
+			if (gameGridArray[i][j] != 0) bgColor = 'reserved-cell'
+
+			cell.style.cssText = 'width: ' + (CELL_WIDTH - 1) + 'px; height: ' + (CELL_WIDTH - 1) + 'px;'
+
+			cell.classList.add('game-cell', bgColor)
 			gameGrid.appendChild(cell)
 		}
 	}
+	scoreBoard.style.cssText = 'width: ' + scoreBoardWidth + 'px; height: ' + topSectionHeight + 'px'
 	scoreBoard.innerHTML = score
 }
 

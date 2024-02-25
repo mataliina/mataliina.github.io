@@ -21,8 +21,6 @@ body {
 #score {
 	font-size: 30px;
 	color: var(--block-bg);
-	height: 50px;
-	width: 369px;
 	text-align: center;
 }
 
@@ -30,8 +28,6 @@ body {
 	margin: 0;
 }
 #game-grid {
-	width: 369px;
-	height: 369px;
 	display: flex;
 	flex-wrap: wrap;
 	border-right: 1px solid var(--grid-border);
@@ -75,7 +71,6 @@ body {
 
 #game-block {
 	position: absolute; 
-	top: 450px;
 	display: flex;
 	flex-wrap: wrap;
 	filter: drop-shadow(4px 7px 8px rgba(50,44,51,0.68));
