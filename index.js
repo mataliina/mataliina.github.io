@@ -24,20 +24,18 @@ let score = 0
 let currentBlock = getRandomBlock()
 let gameBlocks = getRandomBlocks()
 
-
 function drawGameBlock(blockType) {
-	const blockShape = blocks[blockType];
-	gameBlock.style.cssText = "width: " + ((CELL_WIDTH+2) * blockShape[0].length) + "px;"
-	for (let i = 0; i < blockShape.length; i++){
+	const blockShape = blocks[blockType]
+	gameBlock.style.cssText = 'width: ' + (CELL_WIDTH + 2) * blockShape[0].length + 'px;'
+	for (let i = 0; i < blockShape.length; i++) {
 		for (let j = 0; j < blockShape[i].length; j++) {
-			
-			const blockCell = document.createElement("div")
-			
+			const blockCell = document.createElement('div')
+
 			if (blockShape[i][j] === 1) {
-				blockCell.classList.add("block-cell")
+				blockCell.classList.add('block-cell')
 				blockCell.style.cssText = blockCellStyle
 			} else {
-				blockCell.classList.add("empty-block-cell")
+				blockCell.classList.add('empty-block-cell')
 				blockCell.style.cssText = emptyBlockCellStyle
 			}
 			gameBlock.appendChild(blockCell)
@@ -45,41 +43,38 @@ function drawGameBlock(blockType) {
 	}
 }
 
-
 function initGameGridArray() {
 	for (let i = 0; i < ROWS; i++) {
-    	gameGridArray.push(new Array(COLS).fill(0));
+		gameGridArray.push(new Array(COLS).fill(0))
 	}
 }
 
 function getRandomBlock() {
-	const blockTypes = Object.keys(blocks);
-	return blockTypes[Math.floor(Math.random() * blockTypes.length)];
+	const blockTypes = Object.keys(blocks)
+	return blockTypes[Math.floor(Math.random() * blockTypes.length)]
 }
 
 function getRandomBlocks() {
-	const blockTypes = Object.keys(blocks);
-	return [blockTypes[Math.floor(Math.random() * blockTypes.length)], blockTypes[Math.floor(Math.random() * blockTypes.length)], blockTypes[Math.floor(Math.random() * blockTypes.length)]];
+	const blockTypes = Object.keys(blocks)
+	return [blockTypes[Math.floor(Math.random() * blockTypes.length)], blockTypes[Math.floor(Math.random() * blockTypes.length)], blockTypes[Math.floor(Math.random() * blockTypes.length)]]
 }
 
-
-function getNewGameBlock(){
-	gameBlock.innerHTML = ""
+function getNewGameBlock() {
+	gameBlock.innerHTML = ''
 	gameBlock.style.left = gameBlockLeft
 	gameBlock.style.top = gameBlockTop
 	currentBlock = getRandomBlock()
-	console.log("currentBlocks: ", currentBlock)
+	console.log('currentBlocks: ', currentBlock)
 	drawGameBlock(currentBlock)
 
 	if (isGameOver(currentBlock)) {
-		console.log("Game over")
-		overlay.classList.remove("display-none")
+		console.log('Game over')
+		overlay.classList.remove('display-none')
 		finalScore.innerHTML = score
 	}
-} 
+}
 
-
-gameBlock.addEventListener('mousedown', function(event) {
+function handleMouseDown() {
 	isDragging = true
 
 	/* muuta siirrettävän palikan tyyliä:
@@ -89,30 +84,30 @@ gameBlock.addEventListener('mousedown', function(event) {
 		selectedBlockCells[i].classList.add("gaps-between")
 		selectedBlockCells[i].style.cssText = 'width: ' + (CELL_WIDTH-2) + 'px; height: ' + (CELL_HEIGHT-2) + 'px;'
 	}*/
-})
+}
 
-document.addEventListener('mousemove', function(event) {
-	if(isDragging) {
+function handleMouseMove(event) {
+	if (isDragging) {
 		const x = event.clientX
 		const y = event.clientY
-		gameBlock.style.left = (x-gameBlock.offsetWidth / 2) + 'px'
-		gameBlock.style.top = (y-gameBlock.offsetHeight / 2) + 'px'
+		gameBlock.style.left = x - gameBlock.offsetWidth / 2 + 'px'
+		gameBlock.style.top = y - gameBlock.offsetHeight / 2 + 'px'
 	}
-})
+}
 
-document.addEventListener('mouseup', function(event) {
-	if(isDragging == true) {
-		isDragging = false;
+function handleMouseUp() {
+	if (isDragging == true) {
+		isDragging = false
 
-		const rect = gameBlock.getBoundingClientRect();
-		
-		const leftCornerX = rect.left;
-		const leftCornerY = rect.top;
+		const rect = gameBlock.getBoundingClientRect()
 
-		const cellCol = Math.floor(leftCornerX / (CELL_WIDTH+1))
-		const cellRow = Math.floor((leftCornerY-topSectionHeight) / (CELL_HEIGHT+1))
+		const leftCornerX = rect.left
+		const leftCornerY = rect.top
 
-		if(isPossiblePosition(currentBlock, cellRow, cellCol)){
+		const cellCol = Math.floor(leftCornerX / (CELL_WIDTH + 1))
+		const cellRow = Math.floor((leftCornerY - topSectionHeight) / (CELL_HEIGHT + 1))
+
+		if (isPossiblePosition(currentBlock, cellRow, cellCol)) {
 			placeBlockOnGrid(currentBlock, cellRow, cellCol)
 
 			checkCompleted()
@@ -124,8 +119,16 @@ document.addEventListener('mouseup', function(event) {
 			gameBlock.style.top = gameBlockTop
 		}
 	}
-	
-});
+}
+
+gameBlock.addEventListener('touchstart', handleMouseDown)
+document.addEventListener('touchmove', handleMouseMove)
+document.addEventListener('touchend', handleMouseUp)
+
+gameBlock.addEventListener('mousedown', handleMouseDown)
+document.addEventListener('mousemove', handleMouseMove)
+document.addEventListener('mouseup', handleMouseUp) 
+
 
 function isPossiblePosition(blockType, startRow, startCol) {
 	const blockShape = blocks[blockType];
