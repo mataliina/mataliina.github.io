@@ -105,7 +105,7 @@ function handleEvent(event) {
 			selectedBlockCells[i].classList.add("gaps-between")
 			selectedBlockCells[i].style.cssText = 'width: ' + (CELL_WIDTH-2) + 'px; height: ' + (CELL_HEIGHT-2) + 'px;'
 		}*/
-	} else if (event.type === 'touchstart') {
+	} else if (event.type === 'touchstart') {""
 
 		isDragging = true
 		let touch = event.touches[0]
@@ -133,7 +133,7 @@ function handleEvent(event) {
 			gameBlock.style.left = elementX + deltaX + 'px'
 			gameBlock.style.top = elementY + deltaY + 'px'
 		} else {
-			if (event.touches[0].clientY < startY) {
+			if (event.touches[0].clientY < startScrollY) {
 				event.preventDefault()
 			}
 		}
