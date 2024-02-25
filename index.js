@@ -6,6 +6,7 @@ const gameBlock = document.getElementById('game-block')
 const overlay = document.getElementById('overlay')
 const scoreBoard = document.getElementById('score')
 const finalScore = document.getElementById('final-score')
+const newGameBtn = document.getElementById('newGameBtn')
 
 let gameGridArray = []
 
@@ -94,7 +95,6 @@ let elementX, elementY
 let startScrollY
 
 function handleEvent(event) {
-	event.preventDefault()
 	if (event.type === 'mousedown') {
 		isDragging = true
 
@@ -105,7 +105,8 @@ function handleEvent(event) {
 			selectedBlockCells[i].classList.add("gaps-between")
 			selectedBlockCells[i].style.cssText = 'width: ' + (CELL_WIDTH-2) + 'px; height: ' + (CELL_HEIGHT-2) + 'px;'
 		}*/
-	} else if (event.type === 'touchstart') {""
+	} else if (event.type === 'touchstart') {
+		event.preventDefault()
 
 		isDragging = true
 		let touch = event.touches[0]
@@ -125,6 +126,7 @@ function handleEvent(event) {
 		}
 	} else if (event.type === 'touchmove') {
 		if (isDragging) {
+			event.preventDefault()
 			let touch = event.touches[0]
 
 			let deltaX = touch.clientX - initialX
@@ -139,6 +141,7 @@ function handleEvent(event) {
 		}
 	} else if (event.type === 'mouseup' || event.type === 'touchend') {
 		if (isDragging) {
+			event.preventDefault()
 			isDragging = false
 
 			const rect = gameBlock.getBoundingClientRect()
@@ -165,13 +168,9 @@ function handleEvent(event) {
 }
 
 gameBlock.addEventListener('touchstart', handleEvent)
-document.addEventListener(
-	'touchstart',
-	function (event) {
-		startScrollY = event.touches[0].clientY
-	},
-	{ passive: false }
-)
+document.addEventListener('touchstart', function (event) {
+	startScrollY = event.touches[0].clientY
+})
 document.addEventListener('touchmove', handleEvent, { passive: false })
 document.addEventListener('touchend', handleEvent)
 
