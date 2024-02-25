@@ -325,12 +325,14 @@ function isGameOver(gameBlock) {
 }
 
 function startNewGame() {
+	location.reload()
+	/*
 	initGameGridArray()
 	score = 0
 	getNewGameBlock()
 	drawGrid()
-
 	overlay.classList.add('display-none')
+	*/
 }
 
 
