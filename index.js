@@ -26,7 +26,7 @@ if (screenWidth < 380) {
 	topSectionHeight = 40
 	gameGridSize = CELL_WIDTH * 9 + 9
 	gameBlockTop = gameGridSize + topSectionHeight + 30 + 'px'
-	scoreBoardWidth = screenWidth
+	scoreBoardWidth = gameGridSize
 }
 
 const blockCellStyle = 'width: ' + (CELL_WIDTH - 6) + 'px; height: ' + (CELL_HEIGHT - 6) + 'px;'
@@ -90,6 +90,7 @@ function getNewGameBlock() {
 
 function handleEvent(event) {
 	event.preventDefault()
+	console.log('event.type: ', event.type)
 	if (event.type === 'mousedown' || event.type === 'touchstart') {
 		isDragging = true
 

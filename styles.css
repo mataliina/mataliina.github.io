@@ -30,8 +30,7 @@ body {
 #game-grid {
 	display: flex;
 	flex-wrap: wrap;
-	border-right: 1px solid var(--grid-border);
-	border-bottom: 1px solid var(--grid-border);
+	border: 1px solid var(--grid-border);
 	-webkit-box-shadow: 4px 7px 12px -4px rgba(50,44,51,0.68);
 	-moz-box-shadow: 4px 7px 12px -4px rgba(50,44,51,0.68);
 	box-shadow: 4px 7px 12px -4px rgba(50,44,51,0.68);
@@ -39,10 +38,6 @@ body {
 
 .game-cell {
 	border: 1px solid var(--grid-border);
-	/*
-	border-left: 1px solid var(--grid-border);
-	border-top: 1px solid var(--grid-border);
-	*/
 }
 
 .game-cell.dark-bg {
