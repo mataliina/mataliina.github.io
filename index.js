@@ -48,7 +48,6 @@ const emptyBlockCellStyle = 'width: ' + (blockCellWidth + 2) + 'px; height: ' + 
 let isDragging = false
 let score = 0
 
-//let currentBlock = getRandomBlock()
 let currentGameBlocks = getRandomBlocks()
 
 function drawGameBlock(blockType, blockNr) {
@@ -86,12 +85,6 @@ function initGameGridArray() {
 	}
 }
 
-/*
-function getRandomBlock() {
-	const blockTypes = Object.keys(blocks)
-	return blockTypes[Math.floor(Math.random() * blockTypes.length)]
-}*/
-
 function getRandomBlocks() {
 	const blockTypes = Object.keys(blocks)
 	return [blockTypes[Math.floor(Math.random() * blockTypes.length)], blockTypes[Math.floor(Math.random() * blockTypes.length)], blockTypes[Math.floor(Math.random() * blockTypes.length)]]
@@ -118,13 +111,16 @@ function handleEvent(event) {
 		let elementRect = moveable.getBoundingClientRect()
 		elementX = elementRect.left
 		elementY = elementRect.top
-		/* muuta siirrettävän palikan tyyliä:
-		let selectedGameBlock = event.target.parentNode
-		let selectedBlockCells = selectedGameBlock.children
-		for(i= 0; i < selectedBlockCells.length; i++){
-			selectedBlockCells[i].classList.add("gaps-between")
-			selectedBlockCells[i].style.cssText = 'width: ' + (CELL_WIDTH-2) + 'px; height: ' + (CELL_HEIGHT-2) + 'px;'
-		}*/
+		/* Change the style of the movable block:*/
+		let selectedBlockCells = moveable.children
+		for (i = 0; i < selectedBlockCells.length; i++) {
+			selectedBlockCells[i].style.margin = '5px'
+		}
+		//The width of the block (number of cells)
+		let blockType = moveable.getAttribute('data-type')
+		let blockArray = blocks[blockType]
+		let blockwidth = blockArray[0].length
+		moveable.style.width = blockwidth * (blockCellWidth + 12) + 'px'
 	} else if (event.type === 'touchstart') {
 		event.preventDefault()
 		isDragging = true
@@ -137,6 +133,17 @@ function handleEvent(event) {
 		let elementRect = moveable.getBoundingClientRect()
 		elementX = elementRect.left
 		elementY = elementRect.top
+
+		/* Change the style of the movable block:*/
+		let selectedBlockCells = moveable.children
+		for (i = 0; i < selectedBlockCells.length; i++) {
+			selectedBlockCells[i].style.margin = '5px'
+		}
+		//The width of the block (number of cells)
+		let blockType = moveable.getAttribute('data-type')
+		let blockArray = blocks[blockType]
+		let blockwidth = blockArray[0].length
+		moveable.style.width = blockwidth * (blockCellWidth + 12) + 'px'
 	} else if (event.type === 'mousemove') {
 		if (isDragging) {
 			const x = event.clientX
@@ -189,6 +196,15 @@ function handleEvent(event) {
 			} else {
 				moveable.style.left = elementX + 'px'
 				moveable.style.top = elementY + 'px'
+				/* Change back the style of the movable block:*/
+				let selectedBlockCells = moveable.children
+				for (i = 0; i < selectedBlockCells.length; i++) {
+					selectedBlockCells[i].style.margin = '0px'
+				}
+				//The width of the block (number of cells)
+				let blockArray = blocks[blockType]
+				let blockwidth = blockArray[0].length
+				moveable.style.width = (blockCellWidth + 2) * blockwidth + 'px'
 			}
 		}
 	}
