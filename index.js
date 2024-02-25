@@ -74,60 +74,58 @@ function getNewGameBlock() {
 	}
 }
 
-function handleMouseDown() {
-	isDragging = true
+function handleEvent(event) {
+	if (event.type === 'mousedown' || event.type === 'touchstart') {
+		isDragging = true
 
-	/* muuta siirrettävän palikan tyyliä:
-	let selectedGameBlock = event.target.parentNode
-	let selectedBlockCells = selectedGameBlock.children
-	for(i= 0; i < selectedBlockCells.length; i++){
-		selectedBlockCells[i].classList.add("gaps-between")
-		selectedBlockCells[i].style.cssText = 'width: ' + (CELL_WIDTH-2) + 'px; height: ' + (CELL_HEIGHT-2) + 'px;'
-	}*/
-}
+		/* muuta siirrettävän palikan tyyliä:
+		let selectedGameBlock = event.target.parentNode
+		let selectedBlockCells = selectedGameBlock.children
+		for(i= 0; i < selectedBlockCells.length; i++){
+			selectedBlockCells[i].classList.add("gaps-between")
+			selectedBlockCells[i].style.cssText = 'width: ' + (CELL_WIDTH-2) + 'px; height: ' + (CELL_HEIGHT-2) + 'px;'
+		}*/
+	} else if (event.type === 'mousemove' || event.type === 'touchmove') {
+		if (isDragging) {
+			const x = event.clientX
+			const y = event.clientY
+			gameBlock.style.left = x - gameBlock.offsetWidth / 2 + 'px'
+			gameBlock.style.top = y - gameBlock.offsetHeight / 2 + 'px'
+		}
+	} else if (event.type === 'mouseup' || event.type === 'touchend') {
+		if (isDragging == true) {
+			isDragging = false
 
-function handleMouseMove(event) {
-	if (isDragging) {
-		const x = event.clientX
-		const y = event.clientY
-		gameBlock.style.left = x - gameBlock.offsetWidth / 2 + 'px'
-		gameBlock.style.top = y - gameBlock.offsetHeight / 2 + 'px'
-	}
-}
+			const rect = gameBlock.getBoundingClientRect()
 
-function handleMouseUp() {
-	if (isDragging == true) {
-		isDragging = false
+			const leftCornerX = rect.left
+			const leftCornerY = rect.top
 
-		const rect = gameBlock.getBoundingClientRect()
+			const cellCol = Math.floor(leftCornerX / (CELL_WIDTH + 1))
+			const cellRow = Math.floor((leftCornerY - topSectionHeight) / (CELL_HEIGHT + 1))
 
-		const leftCornerX = rect.left
-		const leftCornerY = rect.top
+			if (isPossiblePosition(currentBlock, cellRow, cellCol)) {
+				placeBlockOnGrid(currentBlock, cellRow, cellCol)
 
-		const cellCol = Math.floor(leftCornerX / (CELL_WIDTH + 1))
-		const cellRow = Math.floor((leftCornerY - topSectionHeight) / (CELL_HEIGHT + 1))
+				checkCompleted()
 
-		if (isPossiblePosition(currentBlock, cellRow, cellCol)) {
-			placeBlockOnGrid(currentBlock, cellRow, cellCol)
-
-			checkCompleted()
-
-			drawGrid()
-			getNewGameBlock()
-		} else {
-			gameBlock.style.left = gameBlockLeft
-			gameBlock.style.top = gameBlockTop
+				drawGrid()
+				getNewGameBlock()
+			} else {
+				gameBlock.style.left = gameBlockLeft
+				gameBlock.style.top = gameBlockTop
+			}
 		}
 	}
 }
 
-gameBlock.addEventListener('touchstart', handleMouseDown)
-document.addEventListener('touchmove', handleMouseMove)
-document.addEventListener('touchend', handleMouseUp)
+gameBlock.addEventListener('touchstart', handleEvent)
+document.addEventListener('touchmove', handleEvent)
+document.addEventListener('touchend', handleEvent)
 
-gameBlock.addEventListener('mousedown', handleMouseDown)
-document.addEventListener('mousemove', handleMouseMove)
-document.addEventListener('mouseup', handleMouseUp) 
+gameBlock.addEventListener('mousedown', handleEvent)
+document.addEventListener('mousemove', handleEvent)
+document.addEventListener('mouseup', handleEvent) 
 
 
 function isPossiblePosition(blockType, startRow, startCol) {
