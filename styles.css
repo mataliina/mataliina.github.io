@@ -72,6 +72,13 @@ body {
 	background-color: rgb(236, 228, 244);
 }*/
 
+.block {
+	position: absolute; 
+	display: flex;
+	flex-wrap: wrap;
+	filter: drop-shadow(4px 7px 8px rgba(50,44,51,0.68));	
+}
+
 #game-block {
 	position: absolute; 
 	display: flex;

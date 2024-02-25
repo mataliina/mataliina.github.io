@@ -1,8 +1,14 @@
 const ROWS = 9
 const COLS = 9
 const SUBGRID_SIZE = 3
+
 const gameGrid = document.getElementById('game-grid')
-const gameBlock = document.getElementById('game-block')
+const gameBlockArea = document.getElementById('game-block-area')
+const gameBlock0 = document.getElementById('game-block-0')
+const gameBlock1 = document.getElementById('game-block-1')
+const gameBlock2 = document.getElementById('game-block-2')
+const theBlocks = document.querySelectorAll('.block')
+const gameBlockContainers = document.querySelectorAll('.game-block-container')
 const overlay = document.getElementById('overlay')
 const scoreBoard = document.getElementById('score')
 const finalScore = document.getElementById('final-score')
@@ -16,36 +22,43 @@ let gameGridSize = 369
 
 const screenWidth = window.innerWidth
 
-const gameBlockLeft = '10px'
-let gameBlockTop = '450px'
 let topSectionHeight = 50
 let scoreBoardWidth = 369
+
+gameBlockContainers.forEach(function (div) {
+	div.style.cssText = 'width: ' + gameGridSize / 3 + 'px;'
+})
 
 if (screenWidth < 380) {
 	CELL_WIDTH = screenWidth / 10
 	CELL_HEIGHT = CELL_WIDTH
 	topSectionHeight = 40
 	gameGridSize = CELL_WIDTH * 9 + 9
-	gameBlockTop = gameGridSize + topSectionHeight + 30 + 'px'
+
 	scoreBoardWidth = gameGridSize
 }
+let gameBlockTop = gameGridSize + topSectionHeight + 30
+const gameBlockLeft = 10
 
-const blockCellStyle = 'width: ' + (CELL_WIDTH - 6) + 'px; height: ' + (CELL_HEIGHT - 6) + 'px;'
-const emptyBlockCellStyle = 'width: ' + (CELL_WIDTH - 4) + 'px; height: ' + (CELL_HEIGHT - 4) + 'px;'
+let blockCellWidth = CELL_WIDTH - 14
+let blockCellHeight = CELL_HEIGHT - 14
+const blockCellStyle = 'width: ' + blockCellWidth + 'px; height: ' + blockCellHeight + 'px;'
+const emptyBlockCellStyle = 'width: ' + (blockCellWidth + 2) + 'px; height: ' + (blockCellHeight + 2) + 'px;'
 
 let isDragging = false
 let score = 0
 
-let currentBlock = getRandomBlock()
-let gameBlocks = getRandomBlocks()
+//let currentBlock = getRandomBlock()
+let currentGameBlocks = getRandomBlocks()
 
-function drawGameBlock(blockType) {
+function drawGameBlock(blockType, blockNr) {
 	const blockShape = blocks[blockType]
-	gameBlock.style.cssText = 'width: ' + (CELL_WIDTH + 2) * blockShape[0].length + 'px; top: ' + gameBlockTop
+
+	theBlocks[blockNr].style.cssText = 'width: ' + (blockCellWidth + 2) * blockShape[0].length + 'px; height: ' + (blockCellHeight + 2) * blockShape.length + 'px; top: ' + gameBlockTop + 'px; left: ' + (blockNr * (gameGridSize / 3) + 10) + 'px;'
+
 	for (let i = 0; i < blockShape.length; i++) {
 		for (let j = 0; j < blockShape[i].length; j++) {
 			const blockCell = document.createElement('div')
-
 			if (blockShape[i][j] === 1) {
 				blockCell.classList.add('block-cell')
 				blockCell.style.cssText = blockCellStyle
@@ -53,9 +66,17 @@ function drawGameBlock(blockType) {
 				blockCell.classList.add('empty-block-cell')
 				blockCell.style.cssText = emptyBlockCellStyle
 			}
-			gameBlock.appendChild(blockCell)
+
+			theBlocks[blockNr].appendChild(blockCell)
+			theBlocks[blockNr].setAttribute('data-type', blockType)
 		}
 	}
+}
+
+function drawGameBlocks(currentGameBlocks) {
+	currentGameBlocks.forEach((block, index) => {
+		drawGameBlock(block, index)
+	})
 }
 
 function initGameGridArray() {
@@ -65,39 +86,38 @@ function initGameGridArray() {
 	}
 }
 
+/*
 function getRandomBlock() {
 	const blockTypes = Object.keys(blocks)
 	return blockTypes[Math.floor(Math.random() * blockTypes.length)]
-}
+}*/
 
 function getRandomBlocks() {
 	const blockTypes = Object.keys(blocks)
 	return [blockTypes[Math.floor(Math.random() * blockTypes.length)], blockTypes[Math.floor(Math.random() * blockTypes.length)], blockTypes[Math.floor(Math.random() * blockTypes.length)]]
 }
 
-function getNewGameBlock() {
-	gameBlock.innerHTML = ''
-	gameBlock.style.left = gameBlockLeft
-	gameBlock.style.top = gameBlockTop
-	currentBlock = getRandomBlock()
-	console.log('currentBlocks: ', currentBlock)
-	drawGameBlock(currentBlock)
-
-	if (isGameOver(currentBlock)) {
-		console.log('Game over')
-		overlay.classList.remove('display-none')
-		finalScore.innerHTML = score
-	}
+function getNewGameBlocks() {
+	theBlocks.forEach(function (block) {
+		block.innerHTML = ''
+	})
+	currentGameBlocks = getRandomBlocks()
+	drawGameBlocks(currentGameBlocks)
 }
 
+/* for touch events */
 let initialX, initialY
 let elementX, elementY
 let startScrollY
+let moveable
 
 function handleEvent(event) {
 	if (event.type === 'mousedown') {
 		isDragging = true
-
+		moveable = this
+		let elementRect = moveable.getBoundingClientRect()
+		elementX = elementRect.left
+		elementY = elementRect.top
 		/* muuta siirrettävän palikan tyyliä:
 		let selectedGameBlock = event.target.parentNode
 		let selectedBlockCells = selectedGameBlock.children
@@ -107,22 +127,22 @@ function handleEvent(event) {
 		}*/
 	} else if (event.type === 'touchstart') {
 		event.preventDefault()
-
 		isDragging = true
+		moveable = this
 		let touch = event.touches[0]
 
 		initialX = touch.clientX
 		initialY = touch.clientY
 
-		let elementRect = gameBlock.getBoundingClientRect()
+		let elementRect = moveable.getBoundingClientRect()
 		elementX = elementRect.left
 		elementY = elementRect.top
 	} else if (event.type === 'mousemove') {
 		if (isDragging) {
 			const x = event.clientX
 			const y = event.clientY
-			gameBlock.style.left = x - gameBlock.offsetWidth / 2 + 'px'
-			gameBlock.style.top = y - gameBlock.offsetHeight / 2 + 'px'
+			moveable.style.left = x - moveable.offsetWidth / 2 + 'px'
+			moveable.style.top = y - moveable.offsetHeight / 2 + 'px'
 		}
 	} else if (event.type === 'touchmove') {
 		if (isDragging) {
@@ -132,8 +152,8 @@ function handleEvent(event) {
 			let deltaX = touch.clientX - initialX
 			let deltaY = touch.clientY - initialY
 
-			gameBlock.style.left = elementX + deltaX + 'px'
-			gameBlock.style.top = elementY + deltaY + 'px'
+			moveable.style.left = elementX + deltaX + 'px'
+			moveable.style.top = elementY + deltaY + 'px'
 		} else {
 			if (event.touches[0].clientY < startScrollY) {
 				event.preventDefault()
@@ -144,37 +164,46 @@ function handleEvent(event) {
 			event.preventDefault()
 			isDragging = false
 
-			const rect = gameBlock.getBoundingClientRect()
+			const rect = moveable.getBoundingClientRect()
 
 			const leftCornerX = rect.left
 			const leftCornerY = rect.top
 
 			const cellCol = Math.floor(leftCornerX / (CELL_WIDTH + 1))
 			const cellRow = Math.floor((leftCornerY - topSectionHeight) / (CELL_HEIGHT + 1))
-
-			if (isPossiblePosition(currentBlock, cellRow, cellCol)) {
-				placeBlockOnGrid(currentBlock, cellRow, cellCol)
-
+			let blockType = moveable.getAttribute('data-type')
+			if (isPossiblePosition(blockType, cellRow, cellCol)) {
+				placeBlockOnGrid(blockType, cellRow, cellCol)
 				checkCompleted()
-
+				currentGameBlocks.splice(currentGameBlocks.indexOf(blockType), 1)
+				moveable.innerHTML = ''
 				drawGrid()
-				getNewGameBlock()
+
+				if (currentGameBlocks.length < 1) getNewGameBlocks()
+
+				if (isGameOver(currentGameBlocks)) {
+					console.log('Game over')
+					overlay.classList.remove('display-none')
+					finalScore.innerHTML = score
+				}
 			} else {
-				gameBlock.style.left = gameBlockLeft
-				gameBlock.style.top = gameBlockTop
+				moveable.style.left = elementX + 'px'
+				moveable.style.top = elementY + 'px'
 			}
 		}
 	}
 }
 
-gameBlock.addEventListener('touchstart', handleEvent)
+theBlocks.forEach(function (block) {
+	block.addEventListener('touchstart', handleEvent)
+	block.addEventListener('mousedown', handleEvent)
+})
 document.addEventListener('touchstart', function (event) {
 	startScrollY = event.touches[0].clientY
 })
 document.addEventListener('touchmove', handleEvent, { passive: false })
 document.addEventListener('touchend', handleEvent)
 
-gameBlock.addEventListener('mousedown', handleEvent)
 document.addEventListener('mousemove', handleEvent)
 document.addEventListener('mouseup', handleEvent)
 
@@ -311,16 +340,21 @@ function clearCompletedSubgrids(completedGrids) {
 	})
 }
 
-function isGameOver(gameBlock) {
-	// TODO: muuta niin että tarkastaa kaikki jäljellä olevat palikat, jos niitä on useita
-	for (i = 0; i < ROWS; i++) {
-		for (j = 0; j < COLS; j++) {
-			if (gameGridArray[i][j] === 0) {
-				if (isPossiblePosition(gameBlock, i, j)) return false
+function isGameOver(gameBlocks) {
+	let isOver = true
+	gameBlocks.forEach(function (block) {
+		for (i = 0; i < ROWS; i++) {
+			for (j = 0; j < COLS; j++) {
+				if (gameGridArray[i][j] === 0) {
+					if (isPossiblePosition(block, i, j)) {
+						isOver = false
+						break
+					}
+				}
 			}
 		}
-	}
-	return true
+	})
+	return isOver
 }
 
 function startNewGame() {
@@ -334,10 +368,9 @@ function startNewGame() {
 	*/
 }
 
-
 initGameGridArray()
 
 drawGrid()
 
-drawGameBlock(currentBlock)
-
+getRandomBlocks()
+drawGameBlocks(currentGameBlocks)
