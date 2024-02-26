@@ -194,9 +194,21 @@ function handleEvent(event) {
 				checkCompleted()
 				currentGameBlocks.splice(currentGameBlocks.indexOf(blockType), 1)
 				moveable.innerHTML = ''
+
 				drawGrid()
 
 				if (currentGameBlocks.length < 1) getNewGameBlocks()
+
+				theBlocks.forEach((block) => {
+					block.classList.remove('disabled-block')
+				})
+
+				let possibleBlocks = getPossibleBlocks(currentGameBlocks)
+				console.log('possibleBlocks: ', possibleBlocks)
+
+				theBlocks.forEach((block) => {
+					if (!possibleBlocks.includes(block.getAttribute('data-type'))) block.classList.add('disabled-block')
+				})
 
 				if (isGameOver(currentGameBlocks)) {
 					console.log('Game over')
@@ -366,16 +378,32 @@ function clearCompletedSubgrids(completedGrids) {
 	})
 }
 
+function getPossibleBlocks(gameBlocks) {
+	console.log('haetaan maholliset näistä: ', gameBlocks)
+	let possibleBlocks = []
+	gameBlocks.forEach(function (block) {
+		let isPossible = false
+		for (i = 0; i < ROWS; i++) {
+			for (j = 0; j < COLS; j++) {
+				if (isPossiblePosition(block, i, j)) {
+					isPossible = true
+					break
+				}
+			}
+		}
+		if (isPossible) possibleBlocks.push(block)
+	})
+	return possibleBlocks
+}
+
 function isGameOver(gameBlocks) {
 	let isOver = true
 	gameBlocks.forEach(function (block) {
 		for (i = 0; i < ROWS; i++) {
 			for (j = 0; j < COLS; j++) {
-				if (gameGridArray[i][j] === 0) {
-					if (isPossiblePosition(block, i, j)) {
-						isOver = false
-						break
-					}
+				if (isPossiblePosition(block, i, j)) {
+					isOver = false
+					break
 				}
 			}
 		}
