@@ -46,7 +46,7 @@ let blockCellHeight = CELL_HEIGHT - 14
 const blockCellStyle = 'width: ' + blockCellWidth + 'px; height: ' + blockCellHeight + 'px;'
 const emptyBlockCellStyle = 'width: ' + (blockCellWidth + 2) + 'px; height: ' + (blockCellHeight + 2) + 'px;'
 
-settings.style.cssText = 'top: ' + (topSectionHeight + gameGridSize + 160) + 'px; width: ' + scoreBoardWidth + 'px;'
+settings.style.cssText = 'top: ' + (topSectionHeight + gameGridSize + blockCellHeight * 5 + 30) + 'px; width: ' + scoreBoardWidth + 'px;'
 
 let isDragging = false
 let score = 0
