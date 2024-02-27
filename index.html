@@ -19,7 +19,7 @@
 			<h2>GAME OVER</h2>
 			<h4>Score:</h4>
 			<p id="final-score"></p>
-			<button id="newGameBtn" class="play-regular" onclick="startNewGame()">Try again</button>
+			<button id="newGameBtn" onclick="startNewGame()">Try again</button>
 		</div>
 	</div>
 	<div id="score">0</div>
@@ -27,10 +27,15 @@
 	<div id="game-block-0" class="block"></div>
 	<div id="game-block-1" class="block"></div>
 	<div id="game-block-2" class="block"></div>
-		
+	
+	<div id="settings">
+		<button id="restartBtn" onclick="startNewGame()">Restart</button>
+		<button id="challengesBtn" onclick="startNewChallenge()">Start new challenge</button>
 	</div>
+	
 
 	<script src="blocks.js"></script>
+	<script src="challenges.js"></script>
 	<script src="index.js"></script>
 
 </body>

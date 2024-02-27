@@ -13,6 +13,7 @@ const overlay = document.getElementById('overlay')
 const scoreBoard = document.getElementById('score')
 const finalScore = document.getElementById('final-score')
 const newGameBtn = document.getElementById('newGameBtn')
+const settings = document.getElementById('settings')
 
 let gameGridArray = []
 
@@ -44,6 +45,8 @@ let blockCellWidth = CELL_WIDTH - 14
 let blockCellHeight = CELL_HEIGHT - 14
 const blockCellStyle = 'width: ' + blockCellWidth + 'px; height: ' + blockCellHeight + 'px;'
 const emptyBlockCellStyle = 'width: ' + (blockCellWidth + 2) + 'px; height: ' + (blockCellHeight + 2) + 'px;'
+
+settings.style.cssText = 'top: ' + (topSectionHeight + gameGridSize + 160) + 'px; width: ' + scoreBoardWidth + 'px;'
 
 let isDragging = false
 let score = 0
@@ -204,7 +207,6 @@ function handleEvent(event) {
 				})
 
 				let possibleBlocks = getPossibleBlocks(currentGameBlocks)
-				console.log('possibleBlocks: ', possibleBlocks)
 
 				theBlocks.forEach((block) => {
 					if (!possibleBlocks.includes(block.getAttribute('data-type'))) block.classList.add('disabled-block')
@@ -379,7 +381,6 @@ function clearCompletedSubgrids(completedGrids) {
 }
 
 function getPossibleBlocks(gameBlocks) {
-	console.log('haetaan maholliset näistä: ', gameBlocks)
 	let possibleBlocks = []
 	gameBlocks.forEach(function (block) {
 		let isPossible = false
@@ -411,15 +412,33 @@ function isGameOver(gameBlocks) {
 	return isOver
 }
 
+function getRandomChallenge() {
+	const challTypes = Object.keys(challenges)
+	const randomChallenge = challTypes[Math.floor(Math.random() * challTypes.length)]
+	return challenges[randomChallenge]
+}
+
 function startNewGame() {
-	location.reload()
-	/*
+	//location.reload()
 	initGameGridArray()
 	score = 0
-	getNewGameBlock()
+	getNewGameBlocks()
 	drawGrid()
+	theBlocks.forEach((block) => {
+		block.classList.remove('disabled-block')
+	})
 	overlay.classList.add('display-none')
-	*/
+}
+
+function startNewChallenge() {
+	gameGridArray = getRandomChallenge()
+	score = 0
+	getNewGameBlocks()
+	drawGrid()
+	theBlocks.forEach((block) => {
+		block.classList.remove('disabled-block')
+	})
+	overlay.classList.add('display-none')
 }
 
 initGameGridArray()

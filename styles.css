@@ -6,6 +6,7 @@
 	--block-inner-border: #886D80;/*#b5a6b5;*/
 	--block-border: #181317;
 	--grid-border: #3b2e38;
+	--button-bg: #7B814B;
 }
 
 body {
@@ -131,11 +132,20 @@ body {
 	border: 2px solid var(--grid-border);
 }
 
+button {
+	border: 2px solid var(--grid-border);
+	background-color: var(--button-bg);
+	color: var(--grid-border);
+	font-family: "play";
+	padding: 5px 10px;
+	margin: 5px;
+	box-shadow: inset -4px -7px 4px -4px var(--dark-bg);
+}
+
 #newGameBtn {
 	padding: 10px 30px;
 	background-color: var(--block-bg);
 	color: var(--main-bg);
-	border: 2px solid var(--grid-border);
 	font-size: large;
 	box-shadow: inset -4px -7px 4px -4px var(--block-inner-border);
 }
@@ -146,4 +156,11 @@ body {
 
 #final-score {
 	font-size: large;
+}
+
+#settings {
+	display: flex;
+	flex-wrap: wrap;
+	position: absolute;
+	justify-content: center;
 }
