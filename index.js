@@ -234,9 +234,14 @@ function handleEvent(event) {
 	}
 }
 
+function preventEvent(event) {
+	event.preventDefault()
+}
+
 theBlocks.forEach(function (block) {
 	block.addEventListener('touchstart', handleEvent)
 	block.addEventListener('mousedown', handleEvent)
+	block.addEventListener('dragstart', preventEvent)
 })
 document.addEventListener('touchstart', function (event) {
 	startScrollY = event.touches[0].clientY
